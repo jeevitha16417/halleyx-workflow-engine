@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Workflow {
+  id            String      @id @default(uuid())
+  name          String
+  description   String      @default("")
+  version       Int         @default(1)
+  is_active     Boolean     @default(true)
+  input_schema  Json        @default("{}")
+  start_step_id String?
+
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
+
+  steps         Step[]
+  executions    Execution[]
+}
+
+model Step {
+  id          String   @id @default(uuid())
+  workflow_id String
+  name        String
+  step_type   String   @default("task")
+  order       Int      @default(0)
+  metadata    Json     @default("{}")
+
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  workflow    Workflow  @relation(fields: [workflow_id], references: [id])
+  rules       Rule[]
+}
+
+model Rule {
+  id           String   @id @default(uuid())
+  step_id      String
+  condition    String
+  next_step_id String?
+  priority     Int      @default(10)
+
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  step         Step     @relation(fields: [step_id], references: [id])
+}
+
+model Execution {
+  id               String    @id @default(uuid())
+  workflow_id      String
+  workflow_version Int       @default(1)
+  status           String    @default("pending")
+  data             Json      @default("{}")
+  logs             Json      @default("[]")
+  current_step_id  String?
+  retries          Int       @default(0)
+  triggered_by     String    @default("user")
+
+  started_at       DateTime  @default(now())
+  ended_at         DateTime?
+
+  workflow         Workflow  @relation(fields: [workflow_id], references: [id])
+}
