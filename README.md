@@ -1,6 +1,6 @@
-# Halleyx Workflow Engine 🚀
-## 🎥 Demo Video
-👉 [Click here to watch the demo](https://drive.google.com/file/d/1VZ-pESWLBTaJB4jp2Uc40EloskYWlQo4/view?usp=sharing)
+# Halleyx Workflow Engine 
+## Demo Video
+[Click here to watch the demo](https://drive.google.com/file/d/1VZ-pESWLBTaJB4jp2Uc40EloskYWlQo4/view?usp=sharing)
 
 > Built for the Halleyx Full Stack Engineer Placement Challenge  
 > by Jeevi — March 2026
@@ -29,18 +29,18 @@ I spent most of my time on the **rule engine** and **execution engine** because 
 
 ## Features
 
-- ✅ Design workflows with unlimited steps
-- ✅ Write routing rules in plain JS expressions
-- ✅ Role-based login (Admin, Manager, CEO, Finance)
-- ✅ Approval steps — pauses and waits for human decision
-- ✅ Notification steps — simulates email/Slack in logs
-- ✅ Live execution polling every 1.5 seconds
-- ✅ Full audit log with per-step timing
-- ✅ Workflow versioning — every edit increments version
-- ✅ Loop protection — MAX_ITERATIONS = 50
-- ✅ Rule syntax validator
-- ✅ Cancel and retry executions
-- ✅ Automated API tests
+- Design workflows with unlimited steps
+- Write routing rules in plain JS expressions
+- Role-based login (Admin, Manager, CEO, Finance)
+- Approval steps — pauses and waits for human decision
+- Notification steps — simulates email/Slack in logs
+- Live execution polling every 1.5 seconds
+- Full audit log with per-step timing
+- Workflow versioning — every edit increments version
+- Loop protection — MAX_ITERATIONS = 50
+- Rule syntax validator
+- Cancel and retry executions
+- Automated API tests
 
 ---
 
@@ -268,7 +268,7 @@ Input: { "amount": 500, "country": "US", "department": "Engineering", "priority"
 10:01:45  CEO Approval          WAITING_APPROVAL
 10:02:10  CEO Approval          APPROVED (by: ceo)
 10:02:10  Task Completion       COMPLETED [87ms]
-          ✅ STATUS: SUCCESS
+          STATUS: SUCCESS
 ```
 
 ---
