@@ -6,7 +6,7 @@ const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 const app = express();
-app.use(cors({ origin: '*' }));
+app.use(cors({ origin: '*', credentials: false }));
 app.use(express.json());
 
 // ── USERS ──
@@ -510,7 +510,7 @@ async function continueExecution(executionId, fromStepId) {
 // AUTH ENDPOINTS
 // ══════════════════════════════════════════════════════
 
-app.post('/auth/login', function(req, res) {
+app.post('/api/auth/login', function(req, res) {
   const { username, password } = req.body;
   if (!username || !password) return res.status(400).json({ error: 'Username and password required' });
   const user = USERS.find(u => u.username === username && u.password === password);
