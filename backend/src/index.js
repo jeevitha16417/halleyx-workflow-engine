@@ -518,12 +518,12 @@ app.post('/api/auth/login', function(req, res) {
   res.json({ message: 'Login successful', user: { id: user.id, username: user.username, role: user.role, name: user.name } });
 });
 
-app.get('/auth/users', function(req, res) {
+app.get('/api/auth/users', function(req, res) {
   res.json(USERS.map(u => ({ id: u.id, username: u.username, role: u.role, name: u.name })));
 });
 
 // returns only executions waiting for THIS role's approval
-app.get('/auth/pending/:role', async function(req, res) {
+app.get('/api/auth/pending/:role', async function(req, res) {
   try {
     const role = req.params.role;
     const executions = await prisma.execution.findMany({
