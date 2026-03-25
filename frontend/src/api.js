@@ -1,4 +1,4 @@
-const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+const BASE = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 const handle = async (res) => {
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
