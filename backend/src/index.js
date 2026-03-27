@@ -551,7 +551,7 @@ app.get('/api/auth/pending/:role', async function(req, res) {
 // WORKFLOWS
 // ══════════════════════════════════════════════════════
 
-app.post('/workflows', async function(req, res) {
+app.post('/api/workflows', async function(req, res) {
   try {
     const { name, description, input_schema } = req.body;
     if (!name) return res.status(400).json({ error: 'Name is required' });
@@ -562,7 +562,7 @@ app.post('/workflows', async function(req, res) {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.get('/workflows', async function(req, res) {
+app.get('/api/workflows', async function(req, res) {
   try {
     const { search, page = 1, limit = 10 } = req.query;
     const where = search ? { name: { contains: search, mode: 'insensitive' } } : {};
@@ -575,7 +575,7 @@ app.get('/workflows', async function(req, res) {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.get('/workflows/:id', async function(req, res) {
+app.get('/api/workflows/:id', async function(req, res) {
   try {
     const workflow = await prisma.workflow.findUnique({
       where: { id: req.params.id },
@@ -586,7 +586,7 @@ app.get('/workflows/:id', async function(req, res) {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.put('/workflows/:id', async function(req, res) {
+app.put('/api/workflows/:id', async function(req, res) {
   try {
     const existing = await prisma.workflow.findUnique({ where: { id: req.params.id } });
     if (!existing) return res.status(404).json({ error: 'Workflow not found' });
@@ -601,7 +601,7 @@ app.put('/workflows/:id', async function(req, res) {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.delete('/workflows/:id', async function(req, res) {
+app.delete('/api/workflows/:id', async function(req, res) {
   try {
     const id    = req.params.id;
     const steps = await prisma.step.findMany({ where: { workflow_id: id } });
@@ -617,7 +617,7 @@ app.delete('/workflows/:id', async function(req, res) {
 // STEPS
 // ══════════════════════════════════════════════════════
 
-app.post('/workflows/:workflow_id/steps', async function(req, res) {
+app.post('/api/workflows/:workflow_id/steps', async function(req, res) {
   try {
     const { name, step_type, order, metadata } = req.body;
     if (!name) return res.status(400).json({ error: 'Step name is required' });
@@ -627,14 +627,14 @@ app.post('/workflows/:workflow_id/steps', async function(req, res) {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.get('/workflows/:workflow_id/steps', async function(req, res) {
+app.get('/api/workflows/:workflow_id/steps', async function(req, res) {
   try {
     const steps = await prisma.step.findMany({ where: { workflow_id: req.params.workflow_id }, orderBy: { order: 'asc' }, include: { rules: { orderBy: { priority: 'asc' } } } });
     res.json(steps);
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.put('/steps/:id', async function(req, res) {
+app.put('/api/steps/:id', async function(req, res) {
   try {
     const data = {};
     if (req.body.name     !== undefined) data.name     = req.body.name;
@@ -646,7 +646,7 @@ app.put('/steps/:id', async function(req, res) {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.delete('/steps/:id', async function(req, res) {
+app.delete('/api/steps/:id', async function(req, res) {
   try {
     await prisma.rule.deleteMany({ where: { step_id: req.params.id } });
     await prisma.step.delete({ where: { id: req.params.id } });
@@ -658,7 +658,7 @@ app.delete('/steps/:id', async function(req, res) {
 // RULES
 // ══════════════════════════════════════════════════════
 
-app.post('/steps/:step_id/rules', async function(req, res) {
+app.post('/api/steps/:step_id/rules', async function(req, res) {
   try {
     const { condition, next_step_id, priority } = req.body;
     if (!condition) return res.status(400).json({ error: 'Condition is required' });
@@ -667,14 +667,14 @@ app.post('/steps/:step_id/rules', async function(req, res) {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.get('/steps/:step_id/rules', async function(req, res) {
+app.get('/api/steps/:step_id/rules', async function(req, res) {
   try {
     const rules = await prisma.rule.findMany({ where: { step_id: req.params.step_id }, orderBy: { priority: 'asc' } });
     res.json(rules);
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.put('/rules/:id', async function(req, res) {
+app.put('/api/rules/:id', async function(req, res) {
   try {
     const data = {};
     if (req.body.condition    !== undefined) data.condition     = req.body.condition;
@@ -685,14 +685,14 @@ app.put('/rules/:id', async function(req, res) {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.delete('/rules/:id', async function(req, res) {
+app.delete('/api/rules/:id', async function(req, res) {
   try {
     await prisma.rule.delete({ where: { id: req.params.id } });
     res.json({ message: 'Rule deleted' });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.post('/rules/validate', function(req, res) {
+app.post('/api/rules/validate', function(req, res) {
   const { condition } = req.body;
   if (!condition) return res.status(400).json({ error: 'Condition required' });
   res.json(validateCondition(condition));
@@ -702,7 +702,7 @@ app.post('/rules/validate', function(req, res) {
 // EXECUTIONS
 // ══════════════════════════════════════════════════════
 
-app.post('/workflows/:workflow_id/execute', async function(req, res) {
+app.post('/api/workflows/:workflow_id/execute', async function(req, res) {
   try {
     const workflow = await prisma.workflow.findUnique({ where: { id: req.params.workflow_id } });
     if (!workflow)            return res.status(404).json({ error: 'Workflow not found' });
@@ -716,7 +716,7 @@ app.post('/workflows/:workflow_id/execute', async function(req, res) {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.get('/executions/:id', async function(req, res) {
+app.get('/api/executions/:id', async function(req, res) {
   try {
     const execution = await prisma.execution.findUnique({ where: { id: req.params.id }, include: { workflow: { select: { name: true, version: true } } } });
     if (!execution) return res.status(404).json({ error: 'Execution not found' });
@@ -724,7 +724,7 @@ app.get('/executions/:id', async function(req, res) {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.get('/executions', async function(req, res) {
+app.get('/api/executions', async function(req, res) {
   try {
     const { page = 1, limit = 20 } = req.query;
     const skip = (parseInt(page) - 1) * parseInt(limit);
@@ -736,7 +736,7 @@ app.get('/executions', async function(req, res) {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.post('/executions/:id/cancel', async function(req, res) {
+app.post('/api/executions/:id/cancel', async function(req, res) {
   try {
     const execution = await prisma.execution.findUnique({ where: { id: req.params.id } });
     if (!execution) return res.status(404).json({ error: 'Not found' });
@@ -746,7 +746,7 @@ app.post('/executions/:id/cancel', async function(req, res) {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.post('/executions/:id/retry', async function(req, res) {
+app.post('/api/executions/:id/retry', async function(req, res) {
   try {
     const execution = await prisma.execution.findUnique({ where: { id: req.params.id } });
     if (!execution) return res.status(404).json({ error: 'Not found' });
@@ -757,7 +757,7 @@ app.post('/executions/:id/retry', async function(req, res) {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.post('/executions/:id/approve', async function(req, res) {
+app.post('/api/executions/:id/approve', async function(req, res) {
   try {
     const { approver_id = 'user', approver_role = 'manager', comment = '' } = req.body;
 
@@ -809,7 +809,7 @@ app.post('/executions/:id/approve', async function(req, res) {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.post('/executions/:id/reject', async function(req, res) {
+app.post('/api/executions/:id/reject', async function(req, res) {
   try {
     const { approver_id = 'user', approver_role = 'manager', comment = '' } = req.body;
 
@@ -836,7 +836,7 @@ app.post('/executions/:id/reject', async function(req, res) {
 // SEED
 // ══════════════════════════════════════════════════════
 
-app.post('/seed', async function(req, res) {
+app.post('/api/seed', async function(req, res) {
   try {
     await prisma.execution.deleteMany();
     const allSteps = await prisma.step.findMany();
@@ -917,7 +917,7 @@ app.post('/seed', async function(req, res) {
 // HEALTH
 // ══════════════════════════════════════════════════════
 
-app.get('/health', function(req, res) {
+app.get('/api/health', function(req, res) {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
