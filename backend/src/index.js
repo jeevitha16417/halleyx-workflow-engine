@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
-require('dotenv').config({ override: false });
+// dotenv disabled on Railway - env vars injected by platform;
 const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
