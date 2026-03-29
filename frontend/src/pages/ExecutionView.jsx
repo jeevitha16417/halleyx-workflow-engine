@@ -189,18 +189,6 @@ export default function ExecutionView({ go, workflowId, executionId: initExecId,
           <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
             <button
               className="btn btn-primary"
-              <div className="form-group" style={{marginTop: 12}}>
-  <label className="form-label" style={{fontSize:12}}>
-    Notification Email (optional)
-  </label>
-  <input
-    className="form-input"
-    type="email"
-    placeholder="Enter email to receive notifications"
-    value={inputs.notif_email || ''}
-    onChange={e => setInputs(p => ({ ...p, notif_email: e.target.value }))}
-  />
-</div>
               onClick={handleRun}
               disabled={running || (execution && ['pending', 'in_progress'].includes(execution.status))}
             >
