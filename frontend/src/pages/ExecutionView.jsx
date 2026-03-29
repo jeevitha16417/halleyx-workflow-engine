@@ -48,7 +48,7 @@ export default function ExecutionView({ go, workflowId, executionId: initExecId,
     };
 
     poll();
-    pollRef.current = setInterval(poll, 1500);
+    pollRef.current = setInterval(poll, 5000);
     return () => clearInterval(pollRef.current);
   }, [execId]);
 
@@ -96,7 +96,7 @@ export default function ExecutionView({ go, workflowId, executionId: initExecId,
   const handleApprove = async () => {
     try {
       await approveExecution(execId, {
-        approver_id: 'user',
+        approver_id: user?.username || "user", approver_role: user?.role || "manager",
         comment: 'Approved via UI'
       });
       showToast('Step approved — execution continues');
@@ -106,7 +106,7 @@ export default function ExecutionView({ go, workflowId, executionId: initExecId,
   const handleReject = async () => {
     try {
       await rejectExecution(execId, {
-        approver_id: 'user',
+        approver_id: user?.username || "user", approver_role: user?.role || "manager",
         comment: 'Rejected via UI'
       });
       showToast('Step rejected');
