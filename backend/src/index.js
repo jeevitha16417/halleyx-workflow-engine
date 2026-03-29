@@ -26,8 +26,15 @@ const ROLE_CAN_APPROVE = {
 // ── EMAIL ──
 // only send one email per event, no duplicates
 async function sendEmail(to, subject, html) {
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    console.log("[EMAIL] Skipped - no credentials configured");
+    return { success: false, error: "No email credentials" };
+  }
   try {
     const transporter = nodemailer.createTransport({
+  host: process.env.EMAIL_HOST || "smtp.gmail.com",
+  port: parseInt(process.env.EMAIL_PORT || "587"),
+  secure: false,
       service: 'gmail',
       auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
     });
