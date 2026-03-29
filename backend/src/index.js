@@ -27,47 +27,27 @@ const ROLE_CAN_APPROVE = {
 // only send one email per event, no duplicates
 async function sendEmail(to, subject, html) {
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    console.log("[EMAIL] Skipped - no credentials configured");
-    return { success: false, error: "No email credentials" };
+    console.log('[EMAIL] Skipped - no credentials');
+    return { success: false, error: 'No credentials' };
   }
   try {
     const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST || "smtp.gmail.com",
-  port: parseInt(process.env.EMAIL_PORT || "587"),
-  secure: false,
-      service: 'gmail',
-      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+      host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+      port: parseInt(process.env.EMAIL_PORT || '587'),
+      secure: false,
+      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+      connectionTimeout: 5000,
+      greetingTimeout: 5000,
+      socketTimeout: 5000
     });
-    await transporter.sendMail({
-      from: '"Halleyx Workflow Engine" <' + process.env.EMAIL_USER + '>',
-      to: to,
-      subject: subject,
-      html: `
-        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden;">
-          <div style="background:#1a2e1c;padding:24px 32px;">
-            <h2 style="color:#3fb950;margin:0;font-size:20px;">Halleyx Workflow Engine</h2>
-            <p style="color:#8bc98a;margin:6px 0 0;font-size:13px;">Automated Workflow Notification</p>
-          </div>
-          <div style="padding:28px 32px;background:#ffffff;">
-            ${html}
-            <hr style="border:none;border-top:1px solid #e0e0e0;margin:24px 0;">
-            <p style="color:#888;font-size:12px;margin:0;">
-              This is an automated message from Halleyx Workflow Engine.<br>
-              Please do not reply to this email.
-            </p>
-          </div>
-        </div>
-      `
-    });
-    console.log('[EMAIL] Sent to ' + to + ' — ' + subject);
+    await transporter.sendMail({ from: process.env.EMAIL_USER, to, subject, html });
+    console.log('[EMAIL] Sent to ' + to);
     return { success: true };
   } catch (e) {
-    console.error('[EMAIL] Failed:', e.message);
+    console.log('[EMAIL] Failed: ' + e.message);
     return { success: false, error: e.message };
   }
 }
-
-// ── RULE ENGINE ──
 function evaluateCondition(condition, data) {
   if (!condition || condition.trim().toUpperCase() === 'DEFAULT') {
     return { result: true, error: null };
